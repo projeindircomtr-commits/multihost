@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application
+        android:name=".CloneApp"
+        android:allowBackup="false"
+        android:label="MultiHost"
+        android:theme="@style/Theme.AppCompat.DayNight">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Her slot kendi process'inde çalışır, böylece birbirinden izole olur -->
+        <activity
+            android:name=".LauncherSlotActivity"
+            android:exported="false"
+            android:process="com.salman.multihost:slot1" />
+
+        <activity
+            android:name=".LauncherSlotActivity2"
+            android:exported="false"
+            android:process="com.salman.multihost:slot2" />
+
+    </application>
+
+</manifest>
