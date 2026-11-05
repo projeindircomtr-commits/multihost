@@ -33,6 +33,25 @@ jobs:
       - name: Build debug APK
         run: ./gradlew assembleDebug --no-daemon
 
+      - name: Re-sign APK with v1+v2+v3 (debug key)
+        run: |
+          BUILD_TOOLS="$ANDROID_HOME/build-tools/34.0.0"
+          APK="app/build/outputs/apk/debug/app-debug.apk"
+          DEBUG_KEYSTORE="$HOME/.android/debug.keystore"
+          if [ ! -f "$DEBUG_KEYSTORE" ]; then
+            mkdir -p "$HOME/.android"
+            keytool -genkeypair -v -keystore "$DEBUG_KEYSTORE" \
+              -alias androiddebugkey -storepass android -keypass android \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -dname "CN=Android Debug,O=Android,C=US"
+          fi
+          "$BUILD_TOOLS/apksigner" sign \
+            --v1-signing-enabled true --v2-signing-enabled true --v3-signing-enabled true \
+            --ks "$DEBUG_KEYSTORE" --ks-pass pass:android --key-pass pass:android \
+            --ks-key-alias androiddebugkey \
+            "$APK"
+          "$BUILD_TOOLS/apksigner" verify --verbose "$APK"
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
